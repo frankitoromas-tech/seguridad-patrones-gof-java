@@ -1,0 +1,20 @@
+==================================================
+   REPORTE DE ACTIVIDAD Y EVENTOS DE SEGURIDAD    
+   Generado: Mon Jul 13 11:10:26 GMT-05:00 2026
+   Operador activo: Oficial_Vargas (ADMIN)
+==================================================
+
+Dispositivo registrado: Reflector Entrada (Floodlight)
+Dispositivo registrado: Sensor de Humo (FireDetector)
+Dispositivo registrado: Cámara Perímetro (Camera)
+Dispositivo registrado: Esclusa de Entrada (Lock)
+Dispositivo registrado: Detector Infrarrojo Antiguo (LegacySensor)
+Operador activo: Oficial_Vargas (ADMIN)
+[SENSOR DE HUMO] Activado
+[CÁMARA PERÍMETRO] Activado
+[CÁMARA PERÍMETRO] Desactivado
+[DETECTOR INFRARROJO ANTIGUO] Sensor disparado (5V)
+
+==================================================
+   Fin del Reporte - Central de Vigilancia        
+==================================================

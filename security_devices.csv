@@ -1,0 +1,5 @@
+RF1,Reflector Entrada,Exterior,Floodlight,true,100
+SD1,Sensor de Humo,Pasillo,FireDetector,true,57.0
+CAM1,Cámara Perímetro,Exterior,Camera,true,true
+LK1,Esclusa de Entrada,Bóveda,Lock,false,Bloqueado
+PIR1,Detector Infrarrojo Antiguo,Almacén,LegacySensor,true,0

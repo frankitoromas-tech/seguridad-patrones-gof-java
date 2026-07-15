@@ -1,0 +1,266 @@
+@startuml SistemaGestionSeguridadVigilancia
+
+title Sistema de Gestion de Seguridad y Vigilancia - Diagrama de Clases (8 Patrones de Diseno)
+
+' Limita el ancho para que quepa completo al exportar a PNG (evita el recorte del lado derecho)
+scale max 3900 width
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+' ==== Colores pastel por paquete ====
+skinparam class {
+    BorderColor #555555
+    ArrowColor  #555555
+}
+
+' =======================================================
+' PAQUETE: MODELOS (DOMINIO)
+' =======================================================
+package "Modelos (Dominio)" #E8F5E9 {
+
+    abstract class DispositivoSeguridadBase {
+        # id : String
+        # nombre : String
+        # ubicacion : String
+        # activo : boolean
+        + activar() : void
+        + desactivar() : void
+        + {abstract} obtenerEstado() : String
+        + obtenerConsumoKwh() : double
+    }
+
+    class ReflectorSeguridad extends DispositivoSeguridadBase {
+        - intensidadLumens : int
+        + obtenerEstado() : String
+    }
+
+    class DetectorHumoIncendio extends DispositivoSeguridadBase {
+        - sensibilidadPPM : int
+        + obtenerEstado() : String
+    }
+
+    class CamaraVigilancia extends DispositivoSeguridadBase {
+        - resolucion : String
+        + transmitirStream() : String
+        + obtenerEstado() : String
+    }
+
+    class CerraduraElectronica extends DispositivoSeguridadBase {
+        - estadoActual : EstadoCerradura
+        + bloquear() : void
+        + desbloquear() : void
+        + activarAlarma() : void
+        + setEstado(e : EstadoCerradura) : void
+        + obtenerEstado() : String
+    }
+
+    class UsuarioOperador {
+        - nombreUsuario : String
+        - rol : Rol
+        + tienePermiso(accion : String) : boolean
+    }
+
+    enum Rol {
+        ADMIN
+        GUEST
+    }
+
+    class RepositorioDispositivosCSV {
+        - rutaArchivo : String
+        + guardar(d : DispositivoSeguridadBase) : void
+        + cargarTodos() : List<DispositivoSeguridadBase>
+        + eliminar(id : String) : void
+    }
+}
+
+' =======================================================
+' PAQUETE: CONTROLADORES
+' =======================================================
+package "Controladores" #E3F2FD {
+
+    class CentralSeguridadSingleton <<Singleton>> {
+        - {static} instancia : CentralSeguridadSingleton
+        - dispositivos : List<DispositivoSeguridadBase>
+        - CentralSeguridadSingleton()
+        + {static} obtenerInstancia() : CentralSeguridadSingleton
+        + registrarDispositivo(d : DispositivoSeguridadBase) : void
+        + ejecutarComando(c : ComandoDispositivo) : void
+    }
+}
+
+' =======================================================
+' PAQUETE: PATRONES CREACIONALES
+' =======================================================
+package "Patrones Creacionales" #FFF9C4 {
+
+    interface FabricaDispositivos <<Factory Method>> {
+        + {abstract} crearDispositivo() : DispositivoSeguridadBase
+    }
+
+    class FabricaReflectores implements FabricaDispositivos {
+        + crearDispositivo() : DispositivoSeguridadBase
+    }
+
+    class FabricaDetectoresHumo implements FabricaDispositivos {
+        + crearDispositivo() : DispositivoSeguridadBase
+    }
+
+    class FabricaVigilancia implements FabricaDispositivos {
+        + crearDispositivo() : DispositivoSeguridadBase
+    }
+
+    class PerfilSeguridad <<Builder Product>> {
+        - nombrePerfil : String
+        - comandos : List<ComandoDispositivo>
+        - horario : String
+        + getNombrePerfil() : String
+    }
+
+    class ConstructorPerfilSeguridad <<Builder>> {
+        - perfil : PerfilSeguridad
+        + conNombre(n : String) : ConstructorPerfilSeguridad
+        + agregarComando(c : ComandoDispositivo) : ConstructorPerfilSeguridad
+        + conHorario(h : String) : ConstructorPerfilSeguridad
+        + construir() : PerfilSeguridad
+    }
+}
+
+' =======================================================
+' PAQUETE: PATRONES ESTRUCTURALES
+' =======================================================
+package "Patrones Estructurales" #F3E5F5 {
+
+    class SensorAntiguoAnalogico <<Adaptee>> {
+        + leerSenalAnalogica() : double
+        + encenderHardware() : void
+    }
+
+    class AdaptadorSensorAntiguo {
+        - sensorAntiguo : SensorAntiguoAnalogico
+        + obtenerEstado() : String
+    }
+
+    class ProxyCamaraSeguridad <<Proxy>> {
+        - camaraReal : CamaraVigilancia
+        - usuario : UsuarioOperador
+        + transmitirStream() : String
+        + obtenerEstado() : String
+    }
+
+    abstract class DecoradorDispositivo <<Decorator>> {
+        # dispositivoEnvuelto : DispositivoSeguridadBase
+        + obtenerEstado() : String
+    }
+
+    class DecoradorAuditorEnergia extends DecoradorDispositivo {
+        - kwhAcumulado : double
+        + medirConsumoTiempoReal() : double
+        + obtenerConsumoKwh() : double
+    }
+}
+
+' =======================================================
+' PAQUETE: PATRONES DE COMPORTAMIENTO
+' =======================================================
+package "Patrones de Comportamiento" #FFE0B2 {
+
+    class SujetoObservable <<Subject>> {
+        - observadores : List<ObservadorSeguridad>
+        + suscribir(o : ObservadorSeguridad) : void
+        + desuscribir(o : ObservadorSeguridad) : void
+        + notificar(evento : String) : void
+    }
+
+    interface ObservadorSeguridad <<Observer>> {
+        + {abstract} actualizar(evento : String) : void
+    }
+
+    interface ComandoDispositivo <<Command>> {
+        + {abstract} ejecutar() : void
+        + {abstract} deshacer() : void
+    }
+
+    class ComandoAccionSeguridad implements ComandoDispositivo {
+        - dispositivos : List<DispositivoSeguridadBase>
+        - accion : String
+        + ejecutar() : void
+        + deshacer() : void
+    }
+
+    interface EstadoCerradura <<State>> {
+        + {abstract} bloquear(c : CerraduraElectronica) : void
+        + {abstract} desbloquear(c : CerraduraElectronica) : void
+        + {abstract} activarAlarma(c : CerraduraElectronica) : void
+    }
+
+    class EstadoBloqueado implements EstadoCerradura {
+        + bloquear(c : CerraduraElectronica) : void
+        + desbloquear(c : CerraduraElectronica) : void
+        + activarAlarma(c : CerraduraElectronica) : void
+    }
+
+    class EstadoDesbloqueado implements EstadoCerradura {
+        + bloquear(c : CerraduraElectronica) : void
+        + desbloquear(c : CerraduraElectronica) : void
+        + activarAlarma(c : CerraduraElectronica) : void
+    }
+
+    class EstadoAlarmaActivada implements EstadoCerradura {
+        + bloquear(c : CerraduraElectronica) : void
+        + desbloquear(c : CerraduraElectronica) : void
+        + activarAlarma(c : CerraduraElectronica) : void
+    }
+}
+
+' =======================================================
+' RELACIONES
+' =======================================================
+
+' --- Singleton / Controlador ---
+CentralSeguridadSingleton "1" o--> "*" DispositivoSeguridadBase : administra
+CentralSeguridadSingleton ..> ComandoDispositivo : ejecuta >
+CentralSeguridadSingleton ..> RepositorioDispositivosCSV : persiste >
+
+' --- Factory Method ---
+FabricaDispositivos ..> DispositivoSeguridadBase : crea >
+FabricaReflectores ..> ReflectorSeguridad : crea >
+FabricaDetectoresHumo ..> DetectorHumoIncendio : crea >
+FabricaVigilancia ..> CamaraVigilancia : crea >
+
+' --- Builder ---
+ConstructorPerfilSeguridad ..> PerfilSeguridad : construye >
+PerfilSeguridad "1" o--> "*" ComandoDispositivo : agrupa
+
+' --- Adapter --- (herencia cross-paquete declarada explicita para evitar nodo fantasma)
+DispositivoSeguridadBase <|-- AdaptadorSensorAntiguo
+AdaptadorSensorAntiguo o--> "1" SensorAntiguoAnalogico : adapta
+
+' --- Proxy ---
+ProxyCamaraSeguridad ..|> DispositivoSeguridadBase
+ProxyCamaraSeguridad o--> "1" CamaraVigilancia : protege
+ProxyCamaraSeguridad ..> UsuarioOperador : valida rol >
+
+' --- Decorator ---
+DecoradorDispositivo o--> "1" DispositivoSeguridadBase : envuelve
+
+' --- Observer ---
+SujetoObservable "1" o--> "*" ObservadorSeguridad : notifica
+DispositivoSeguridadBase --|> SujetoObservable
+
+' --- Command ---
+ComandoAccionSeguridad "1" o--> "*" DispositivoSeguridadBase : opera sobre
+
+' --- State ---
+CerraduraElectronica o--> "1" EstadoCerradura : estado actual
+EstadoBloqueado ..> CerraduraElectronica : cambia estado >
+EstadoDesbloqueado ..> CerraduraElectronica : cambia estado >
+EstadoAlarmaActivada ..> CerraduraElectronica : cambia estado >
+
+' --- Dominio ---
+UsuarioOperador o--> "1" Rol : posee
+RepositorioDispositivosCSV ..> DispositivoSeguridadBase : lee/escribe >
+
+@enduml

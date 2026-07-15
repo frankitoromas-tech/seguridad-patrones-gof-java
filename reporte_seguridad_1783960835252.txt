@@ -1,0 +1,32 @@
+==================================================
+   REPORTE DE ACTIVIDAD Y EVENTOS DE SEGURIDAD    
+   Generado: Mon Jul 13 11:40:35 GMT-05:00 2026
+   Operador activo: Oficial_Vargas (ADMIN)
+==================================================
+
+Dispositivo registrado: Reflector Entrada (Floodlight)
+Dispositivo registrado: Sensor de Humo (FireDetector)
+Dispositivo registrado: Cámara Perímetro (Camera)
+Dispositivo registrado: Esclusa de Entrada (Lock)
+Dispositivo registrado: Detector Infrarrojo Antiguo (LegacySensor)
+Operador activo: Oficial_Vargas (ADMIN)
+[REFLECTOR ENTRADA] Activado
+[REFLECTOR ENTRADA] Intensidad de reflector cambiada a 100%
+[CÁMARA PERÍMETRO] Activado
+Perfil 'Guardia Nocturna' aplicado con éxito.
+Perfil 'Cierre Completo' aplicado con éxito.
+[REFLECTOR ENTRADA] Desactivado
+[REFLECTOR ENTRADA] Intensidad de reflector cambiada a 0%
+[ESCLUSA DE ENTRADA] Desbloqueado
+Perfil 'Desarmar' aplicado con éxito.
+Perfil 'Desarmar' aplicado con éxito.
+[REFLECTOR ENTRADA] Activado
+[REFLECTOR ENTRADA] Intensidad de reflector cambiada a 100%
+[ESCLUSA DE ENTRADA] Bloqueado
+[DETECTOR INFRARROJO ANTIGUO] Sensor restablecido (0V)
+[DETECTOR INFRARROJO ANTIGUO] Sensor disparado (5V)
+[CÁMARA PERÍMETRO] Grabación de seguridad iniciada
+
+==================================================
+   Fin del Reporte - Central de Vigilancia        
+==================================================
