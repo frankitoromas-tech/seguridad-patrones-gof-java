@@ -1,5 +1,8 @@
 # 🛡️ Sistema Integral de Gestión de Seguridad & Vigilancia
 
+[![Java 17 CI](https://github.com/frankitoromas-tech/seguridad-patrones-gof-java/actions/workflows/ci-build.yml/badge.svg)](https://github.com/frankitoromas-tech/seguridad-patrones-gof-java/actions/workflows/ci-build.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 [![Java 17](https://img.shields.io/badge/Java-17%2B-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.oracle.com/java/)
 [![GoF Design Patterns](https://img.shields.io/badge/Patrones_GoF-8%20Implementados-blueviolet?style=for-the-badge)](https://en.wikipedia.org/wiki/Design_Patterns)
 [![Architecture](https://img.shields.io/badge/Arquitectura-MVC%20%2B%20Clean%20Code-007ACC?style=for-the-badge)](#arquitectura-y-diseño)
