@@ -1,106 +1,123 @@
-# 🛡️ Sistema Integral de Gestión de Seguridad & Vigilancia
-
-[![Java 17 CI](https://github.com/frankitoromas-tech/seguridad-patrones-gof-java/actions/workflows/ci-build.yml/badge.svg)](https://github.com/frankitoromas-tech/seguridad-patrones-gof-java/actions/workflows/ci-build.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+# 🛡️ Sistema Integral de Gestión de Seguridad & Vigilancia (8 Patrones GoF)
 
 [![Java 17](https://img.shields.io/badge/Java-17%2B-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.oracle.com/java/)
+[![Maven Central](https://img.shields.io/badge/Build-Maven_3.9+-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)](https://maven.apache.org/)
+[![Java 17 CI](https://github.com/frankitoromas-tech/seguridad-patrones-gof-java/actions/workflows/ci-build.yml/badge.svg)](https://github.com/frankitoromas-tech/seguridad-patrones-gof-java/actions/workflows/ci-build.yml)
+[![Testing: JUnit 5](https://img.shields.io/badge/Testing-JUnit_5_%26_AssertJ-25A162?style=for-the-badge&logo=junit5&logoColor=white)](https://junit.org/junit5/)
 [![GoF Design Patterns](https://img.shields.io/badge/Patrones_GoF-8%20Implementados-blueviolet?style=for-the-badge)](https://en.wikipedia.org/wiki/Design_Patterns)
 [![Architecture](https://img.shields.io/badge/Arquitectura-MVC%20%2B%20Clean%20Code-007ACC?style=for-the-badge)](#arquitectura-y-diseño)
 [![UI](https://img.shields.io/badge/GUI-Java%20Swing-FF6F00?style=for-the-badge)](#interfaz-gráfica)
-[![UTP](https://img.shields.io/badge/UTP-Ingenier%C3%ADa%20de%20Sistemas-red?style=for-the-badge)](https://www.utp.edu.pe/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
-Sistema robusto de nivel empresarial para la monitorización, orquestación y auditoría de dispositivos de seguridad física (cámaras IP con streaming, sensores térmicos/humo, reflectores perimétricos y cerraduras electrónicas biométricas). 
+Sistema robusto de nivel empresarial para la monitorización, orquestación y auditoría de dispositivos de seguridad física (cámaras IP con streaming, sensores térmicos/humo, reflectores perimétricos y cerraduras electrónicas biométricas).
 
-Desarrollado en **Java 17**, el sistema ejemplifica la aplicación rigurosa de **8 patrones de diseño clásicos de la Gang of Four (GoF)**, desacoplamiento modular bajo principios **SOLID**, persistencia desacoplada en CSV y una interfaz visual interactiva basada en **Java Swing**.
+Desarrollado en **Java 17**, el sistema ejemplifica la aplicación rigurosa de **8 patrones de diseño clásicos de la Gang of Four (GoF)**, desacoplamiento modular bajo principios **SOLID**, persistencia desacoplada en CSV, suite automatizada con **JUnit 5 / AssertJ** e interfaz visual interactiva en **Java Swing**.
 
 ---
 
-## 🏛️ Matriz de Patrones de Diseño (GoF)
+## 🏛️ Diagrama de Arquitectura y Patrones GoF
+
+```mermaid
+graph TD
+    UI["PanelControlGUI (Java Swing)"] --> Ctrl["ControladorSeguridad (MVC)"]
+    Ctrl --> Central["CentralSeguridadSingleton (Singleton)"]
+    Central --> Fabrica["FabricaDispositivos (Factory Method)"]
+    Fabrica --> Devs["Dispositivos: Camara | Cerradura | Detector Humo"]
+    Devs --> Proxy["ProxyCamaraSeguridad (Proxy - Control de Roles)"]
+    Devs --> Decorator["DecoradorAuditorEnergia (Decorator - Telemetría)"]
+    Devs --> Adapter["AdaptadorSensorAntiguo (Adapter - Sensores Legados)"]
+    Ctrl --> Command["ComandoAccionSeguridad (Command - Cola de Órdenes)"]
+    Devs --> State["EstadoCerradura (State - Bloqueado / Alarma)"]
+    Central --> Observer["ObservadorSeguridad (Observer - Eventos en Vivo)"]
+```
+
+---
+
+## 🏛️ Matriz de Patrones de Diseño (GoF Implementados)
 
 | Clasificación | Patrón GoF | Clase(s) Clave | Responsabilidad y Problema Resuelto |
 | :--- | :--- | :--- | :--- |
 | **Creacional** | **Singleton** | `CentralSeguridadSingleton` | Garantiza un único punto de control y coordinación centralizada para todo el sistema de vigilancia con acceso concurrente seguro. |
-| **Creacional** | **Factory Method** | `FabricaDispositivos`, `FabricaVigilancia`, `FabricaDetectoresHumo`, `FabricaReflectores` | Desacopla la instanciación de dispositivos concretos (cámaras, sensores, reflectores) permitiendo extender nuevo hardware sin modificar la lógica consumidora. |
-| **Creacional** | **Builder** | `ConstructorPerfilSeguridad`, `PerfilSeguridad` | Permite construir perfiles de seguridad complejos (horarios, niveles de autorización, zonas perimetrales) paso a paso con una sintaxis fluida y legible. |
-| **Estructural** | **Adapter** | `AdaptadorSensorAntiguo`, `SensorAntiguoAnalogico` | Integra sensores analógicos heredados al ecosistema digital moderno adaptando su interfaz sin mutar el código legado. |
-| **Estructural** | **Decorator** | `DecoradorDispositivo`, `DecoradorAuditorEnergia` | Incorpora dinámicamente capacidades de auditoría de telemetría y consumo energético a cualquier dispositivo en tiempo de ejecución sin alterar su jerarquía de clases. |
-| **Estructural** | **Proxy** | `ProxyCamaraSeguridad` | Controla el acceso a las cámaras de alta resolución realizando validación de credenciales, control de roles y carga perezosa (*lazy loading*) de feeds de video. |
-| **Comportamiento** | **Command** | `ComandoDispositivo`, `ComandoAccionSeguridad` | Encapsula las solicitudes de activación/desactivación como objetos independientes, facilitando el encolado de órdenes y el registro de auditoría. |
-| **Comportamiento** | **State** | `EstadoCerradura`, `EstadoBloqueado`, `EstadoDesbloqueado`, `EstadoAlarmaActivada` | Modela el comportamiento de las cerraduras inteligentes según su estado actual, erradicando estructuras complejas de condicionales `if-else`. |
-| **Comportamiento** | **Observer** | `SujetoObservable`, `ObservadorSeguridad` | Notifica en tiempo real a los operadores y consolas de monitoreo ante eventos críticos (detección de intrusos, alarmas de incendio o fallas de hardware). |
+| **Creacional** | **Factory Method** | `FabricaDispositivos`, `FabricaVigilancia`, `FabricaDetectoresHumo`, `FabricaReflectores` | Desacopla la instanciación de dispositivos concretos permitiendo extender nuevo hardware sin modificar la lógica consumidora. |
+| **Creacional** | **Builder** | `ConstructorPerfilSeguridad`, `PerfilSeguridad` | Permite construir perfiles de seguridad complejos (horarios, niveles de autorización, zonas perimetrales) paso a paso con sintaxis fluida. |
+| **Estructural** | **Adapter** | `AdaptadorSensorAntiguo`, `SensorAntiguoAnalogico` | Integra sensores analógicos heredados al ecosistema digital moderno adaptando su interfaz sin mutar código legado. |
+| **Estructural** | **Decorator** | `DecoradorDispositivo`, `DecoradorAuditorEnergia` | Incorpora dinámicamente capacidades de auditoría de telemetría y consumo energético en tiempo de ejecución. |
+| **Estructural** | **Proxy** | `ProxyCamaraSeguridad` | Controla el acceso a las cámaras de alta resolución validando credenciales y control de roles antes de cargar feeds. |
+| **Comportamiento** | **Command** | `ComandoDispositivo`, `ComandoAccionSeguridad` | Encapsula las solicitudes de activación/desactivación como objetos independientes, facilitando el encolado de órdenes. |
+| **Comportamiento** | **State** | `EstadoCerradura`, `EstadoBloqueado`, `EstadoDesbloqueado`, `EstadoAlarmaActivada` | Modela el comportamiento de las cerraduras inteligentes según su estado actual, erradicando estructuras complejas `if-else`. |
+| **Comportamiento** | **Observer** | `SujetoObservable`, `ObservadorSeguridad` | Notifica en tiempo real a las consolas de monitoreo ante eventos críticos (detección de intrusos, alarmas de incendio). |
 
 ---
 
-## 📐 Estructura del Proyecto
+## 📂 Organización Modular del Código
 
 ```
-desarrollo-de-DP/
-├── DiagramaClases.puml          # Especificación formal en PlantUML (arquitectura completa)
-├── out.png / out.svg           # Renderizado visual en alta definición del diagrama
-├── security_devices.csv        # Persistencia de dispositivos registrados y su estado
-├── src/
-│   └── com/seguridad/
-│       ├── controlador/        # Coordinador MVC y orquestación de operaciones
-│       │   └── ControladorSeguridad.java
-│       ├── modelo/             # Entidades del dominio (Cámaras, Sensores, Cerraduras)
-│       │   ├── DispositivoSeguridadBase.java
-│       │   ├── CamaraVigilancia.java
-│       │   ├── CerraduraElectronica.java
-│       │   ├── DetectorHumoIncendio.java
-│       │   ├── ReflectorSeguridad.java
-│       │   └── UsuarioOperador.java
-│       ├── patrones/           # Módulos organizados según la taxonomía GoF
-│       │   ├── creacionales/   # Singleton, Factory Method, Builder
-│       │   ├── estructurales/  # Adapter, Decorator, Proxy
-│       │   └── comportamiento/ # Command, State, Observer
-│       ├── persistencia/       # Acceso a datos y repositorio CSV
-│       │   └── RepositorioDispositivosCSV.java
-│       ├── vista/              # Componentes de interfaz gráfica Swing
-│       │   ├── DialogoAcceso.java
-│       │   └── PanelControlGUI.java
-│       └── principal/          # Puntos de entrada ejecutables
-│           ├── SistemaVigilanciaMain.java
-│           └── EjecutorPruebasAuditoria.java
+seguridad-patrones-gof-java/
+├── .github/workflows/
+│   └── ci-build.yml                  # Pipeline automatizado GitHub Actions (Build & Tests)
+├── pom.xml                           # Descriptor Maven (Java 17, JUnit 5 Jupiter, AssertJ)
+├── security_devices.csv              # Persistencia de dispositivos registrados y su estado
+├── src/com/seguridad/
+│   ├── controlador/                  # Coordinador MVC y orquestación de operaciones
+│   │   └── ControladorSeguridad.java
+│   ├── modelo/                       # Entidades del dominio (Cámaras, Sensores, Cerraduras)
+│   │   ├── DispositivoSeguridadBase.java
+│   │   ├── CamaraVigilancia.java
+│   │   ├── CerraduraElectronica.java
+│   │   ├── DetectorHumoIncendio.java
+│   │   ├── ReflectorSeguridad.java
+│   │   └── UsuarioOperador.java
+│   ├── patrones/                     # Taxonomía formal GoF
+│   │   ├── creacionales/             # Singleton, Factory Method, Builder
+│   │   ├── estructurales/            # Adapter, Decorator, Proxy
+│   │   └── comportamiento/           # Command, State, Observer
+│   ├── persistencia/                 # Repositorio desacoplado CSV
+│   │   └── RepositorioDispositivosCSV.java
+│   ├── vista/                        # Componentes de interfaz gráfica Java Swing
+│   │   ├── DialogoAcceso.java
+│   │   └── PanelControlGUI.java
+│   └── principal/                    # Puntos de entrada ejecutables
+│       ├── SistemaVigilanciaMain.java
+│       └── EjecutorPruebasAuditoria.java
+└── test/com/seguridad/patrones/      # Suite de pruebas unitarias automatizadas
+    └── PatronesGoFTest.java          # Cobertura formal de Singleton, Factory y Registro
 ```
 
 ---
 
-## 🚀 Compilación y Ejecución
+## 🚀 Compilación y Ejecución en 1 Clic con Maven
 
 ### Requisitos Previos
 - **JDK 17** o superior instalado.
-- Terminal bash o PowerShell.
+- **Apache Maven 3.8+** (o ejecutar directamente con IDE).
 
-### 1. Compilar el Código Fuente
+### 1. Clonar el Repositorio
 ```bash
-javac -d bin -sourcepath src src/com/seguridad/principal/SistemaVigilanciaMain.java
+git clone https://github.com/frankitoromas-tech/seguridad-patrones-gof-java.git
+cd seguridad-patrones-gof-java
 ```
 
-### 2. Ejecutar la Aplicación Principal (GUI Swing)
+### 2. Ejecutar la Suite de Pruebas Automatizadas (JUnit 5)
 ```bash
-java -cp bin com.seguridad.principal.SistemaVigilanciaMain
+mvn clean test
 ```
 
-### 3. Ejecutar la Suite de Auditoría de Patrones
+### 3. Ejecutar la Aplicación Visual (Java Swing)
 ```bash
-java -cp bin com.seguridad.principal.EjecutorPruebasAuditoria
+mvn compile exec:java
 ```
 
----
-
-## 📊 Formato de Datos (`security_devices.csv`)
-Los dispositivos se guardan y serializan con el siguiente esquema:
-```csv
-id,nombre,tipo,ubicacion,estado,consumo_watts
-CAM-001,Camara Perimetral Norte,CAMARA,Zona Exterior A,ACTIVO,15.5
-SEN-102,Detector de Humo Central,DETECTOR_HUMO,Pasillo 2,ACTIVO,3.2
-CER-050,Cerradura Boveda Principal,CERRADURA,Sala de Servidores,BLOQUEADO,12.0
+### 4. Ejecutar el Auditor de Patrones por Consola
+```bash
+mvn compile
+java -cp target/classes com.seguridad.principal.EjecutorPruebasAuditoria
 ```
 
 ---
 
 ## 👨‍💻 Autor & Contacto
-- **Desarrollador:** **Φραγκοσύνη / francus 🐦‍🔥** (Frank Emiliano Vargas Huamán)
-- **Especialidad:** Backend Java Enterprise & Patrones de Arquitectura
+- **Desarrollador:** **Frankosyni (Φρανκοσύνη/Francus.)** 🔥 — Frank Emiliano Vargas Huamán
+- **Especialidad:** Software & Agentic AI Developer | Backend Java Enterprise
 - **GitHub:** [@frankitoromas-tech](https://github.com/frankitoromas-tech)
-- **LinkedIn:** [Frank Emiliano Vargas](https://www.linkedin.com/in/frank-emiliano-vargas-huam%C3%A1n-6a010a378/)
+- **LinkedIn:** [Frankosyni en LinkedIn](https://linkedin.com/in/frankosyni-undefined-6a010a378/)
+- **Licencia:** [MIT](LICENSE)
