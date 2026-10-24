@@ -1,4 +1,4 @@
-name: Java 17 CI Build & Pattern Audit
+name: Java 17 CI Build & GoF Patterns Test Suite
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-and-audit:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,13 +19,12 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+        cache: 'maven'
 
-    - name: Compile All Java Sources
-      run: |
-        mkdir -p bin
-        find src -name "*.java" > sources.txt
-        javac -d bin -sourcepath src @sources.txt
+    - name: Run JUnit 5 Automated Test Suite
+      run: mvn clean test -B
 
-    - name: Execute GoF Design Patterns Audit Suite
+    - name: Execute Audit Suite & Verify Compilation
       run: |
-        java -cp bin com.seguridad.principal.EjecutorPruebasAuditoria
+        mvn compile -B
+        java -cp target/classes com.seguridad.principal.EjecutorPruebasAuditoria
