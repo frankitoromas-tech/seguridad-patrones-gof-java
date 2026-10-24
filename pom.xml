@@ -60,7 +60,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.2.0</version>
                 <configuration>
-                    <mainClass>com.seguridad.principal.Main</mainClass>
+                    <mainClass>com.seguridad.principal.SistemaVigilanciaMain</mainClass>
                 </configuration>
             </plugin>
         </plugins>
