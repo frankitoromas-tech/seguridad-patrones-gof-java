@@ -1,0 +1,23 @@
+# Bytecode & Compilados de Java
+bin/
+*.class
+*.jar
+*.war
+*.ear
+
+# Reportes y logs generados en tiempo de ejecución
+*.log
+*.tmp
+reporte_seguridad_*.txt
+
+# Configuración de Entornos de Desarrollo (IDE)
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# Sistema Operativo
+.DS_Store
+Thumbs.db
